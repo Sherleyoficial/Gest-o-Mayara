@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Mayara Miranda Academia</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1A3C34;
+    --verde-m: #2E6B5E;
+    --verde-c: #4CAF8A;
+    --verde-s: #EAF5F0;
+    --accent: #F5A623;
+    --risco: #E74C3C;
+    --risco-s: #FDEDEC;
+    --texto: #1A1A1A;
+    --texto-s: #555;
+    --borda: #E8E8E8;
+    --bg: #F7F9F8;
+    --card: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--texto);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-m) 100%);
+    padding: 24px 20px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(76,175,138,0.15);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 20px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .header-brand {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--verde-c);
+    margin-bottom: 8px;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 16px;
+  }
+  .header-periodo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 2px solid var(--borda);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: none;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--texto-s);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    color: var(--verde-m);
+    border-bottom-color: var(--verde-m);
+  }
+
+  /* CONTEÚDO */
+  .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS KPI */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .kpi-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .kpi {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid var(--borda);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--verde-c);
+    border-radius: 14px 0 0 14px;
+  }
+  .kpi.risco::before { background: var(--risco); }
+  .kpi.accent::before { background: var(--accent); }
+  .kpi-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--texto-s);
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--verde);
+    line-height: 1;
+    margin-bottom: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+  .kpi.risco .kpi-value { color: var(--risco); }
+  .kpi.accent .kpi-value { color: var(--accent); }
+  .kpi-delta {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--texto-s);
+  }
+  .delta-up { color: #27AE60; }
+  .delta-down { color: var(--risco); }
+
+  /* SEÇÃO TITULO */
+  .sec-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--verde-m);
+    margin: 20px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sec-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--borda);
+  }
+
+  /* CARD SIMPLES */
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--borda);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--verde);
+    margin-bottom: 12px;
+  }
+
+  /* BARRA COMPARATIVA */
+  .barra-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .barra-label {
+    font-size: 11px;
+    color: var(--texto-s);
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .barra-wrap { flex: 1; }
+  .barra-bg {
+    height: 8px;
+    background: var(--borda);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2px;
+  }
+  .barra-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+  .barra-val {
+    font-size: 10px;
+    color: var(--texto-s);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* DONUT FAKE */
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .donut-svg { flex-shrink: 0; }
+  .donut-legenda { flex: 1; }
+  .legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .legenda-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legenda-nome { color: var(--texto-s); flex: 1; }
+  .legenda-pct { font-weight: 700; color: var(--texto); font-family: 'DM Mono', monospace; }
+
+  /* LISTA PLANOS */
+  .plano-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borda);
+  }
+  .plano-row:last-child { border-bottom: none; }
+  .plano-nome { font-size: 12px; color: var(--texto); font-weight: 500; }
+  .plano-vals { display: flex; gap: 12px; align-items: center; }
+  .plano-val { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--texto-s); }
+  .plano-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .badge-up { background: #E8F8F0; color: #27AE60; }
+  .badge-down { background: var(--risco-s); color: var(--risco); }
+
+  /* ALERTA */
+  .alerta {
+    background: var(--risco-s);
+    border: 1px solid #FADBD8;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  .alerta-icon { font-size: 18px; flex-shrink: 0; }
+  .alerta-titulo { font-size: 12px; font-weight: 700; color: var(--risco); margin-bottom: 2px; }
+  .alerta-texto { font-size: 11px; color: #7B241C; line-height: 1.4; }
+
+  .positivo {
+    background: var(--verde-s);
+    border: 1px solid #C8E6C9;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+  }
+  .positivo-titulo { font-size: 12px; font-weight: 700; color: var(--verde-m); margin-bottom: 2px; }
+  .positivo-texto { font-size: 11px; color: var(--verde); line-height: 1.4; }
+
+  /* FAIXA ETÁRIA */
+  .faixa-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .faixa-label { font-size: 11px; color: var(--texto-s); width: 60px; flex-shrink: 0; }
+  .faixa-barra { flex: 1; height: 24px; background: var(--borda); border-radius: 6px; overflow: hidden; position: relative; }
+  .faixa-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+  .faixa-pct { font-size: 10px; font-weight: 700; color: #fff; font-family: 'DM Mono', monospace; }
+  .faixa-n { font-size: 11px; color: var(--texto-s); width: 36px; text-align: right; font-family: 'DM Mono', monospace; }
+
+  /* RODAPÉ */
+  .footer {
+    text-align: center;
+    padding: 20px 16px;
+    font-size: 10px;
+    color: var(--texto-s);
+    border-top: 1px solid var(--borda);
+    margin-top: 20px;
+  }
+
+  /* COMPARATIVO FEV/MAR */
+  .comp-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .comp-card {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+  .comp-mes { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--texto-s); margin-bottom: 4px; }
+  .comp-val { font-size: 20px; font-weight: 700; color: var(--verde); font-family: 'DM Mono', monospace; }
+  .comp-sub { font-size: 10px; color: var(--texto-s); margin-top: 2px; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .section.active { animation: fadeIn 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">Ecossistema IA Fitness™ · Consultor Sherley Ferreira</div>
+  <div class="header-title">Mayara Miranda Academia</div>
+  <div class="header-sub">Dashboard de Desempenho</div>
+  <div class="header-periodo">📅 Fevereiro × Março 2026</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('financeiro', this)">💰 Financeiro</div>
+  <div class="tab" onclick="showTab('evasao', this)">📉 Evasão</div>
+  <div class="tab" onclick="showTab('perfil', this)">👥 Perfil</div>
+  <div class="tab" onclick="showTab('alertas', this)">🚨 Alertas</div>
+</div>
+
+<div class="content">
+
+  <!-- TAB FINANCEIRO -->
+  <div class="section active" id="financeiro">
+    <div class="sec-title">Receita Geral</div>
+    <div class="comp-row">
+      <div class="comp-card">
+        <div class="comp-mes">Fevereiro</div>
+        <div class="comp-val">R$14.897</div>
+        <div class="comp-sub">120 pagantes</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-mes">Março</div>
+        <div class="comp-val" style="color:var(--verde-c)">R$18.203</div>
+        <div class="comp-sub">147 pagantes ▲</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid three">
+      <div class="kpi">
+        <div class="kpi-label">Crescimento</div>
+        <div class="kpi-value" style="font-size:18px;color:var(--verde-c)">+22,2%</div>
+        <div class="kpi-delta delta-up">na receita</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Ticket Médio</div>
+        <div class="kpi-value" style="font-size:16px">R$124</div>
+        <div class="kpi-delta">por aluno</div>
+      </div>
+      <div class="kpi accent">
+        <div class="kpi-label">Total 2 meses</div>
+        <div class="kpi-value" style="font-size:16px">R$33,1k</div>
+        <div class="kpi-delta">fev + mar</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Receita por Modalidade</div>
+    <div class="card">
+      <div class="barra-row">
+        <div class="barra-label">Musculação</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:80%;background:var(--verde-c)"></div></div>
+          <div class="barra-val">Fev R$12.143 → Mar R$14.572</div>
+        </div>
+      </div>
+      <div class="barra-row">
+        <div class="barra-label">Personal</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:14%;background:var(--verde-m)"></div></div>
+          <div class="barra-val">Fev R$1.720 → Mar R$2.140</div>
+        </div>
+      </div>
+      <div class="barra-row">
+        <div class="barra-label">Muay Thai</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:6%;background:var(--accent)"></div></div>
+          <div class="barra-val">Fev R$630 → Mar R$910 ▲+44%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">Planos — Top Receita (Março)</div>
+    <div class="card">
+      <div class="plano-row">
+        <div class="plano-nome">Musculação Mensal 3x</div>
+        <div class="plano-vals">
+          <div class="plano-val">R$6.470</div>
+          <div class="plano-badge badge-up">35,5%</div>
+        </div>
+      </div>
+      <div class="plano-row">
+        <div class="plano-nome">Musculação Mensal 5x</div>
+        <div class="plano-vals">
+          <div class="plano-val">R$4.968</div>
+          <div class="plano-badge badge-up">27,3%</div>
+        </div>
+      </div>
+      <div class="plano-row">
+        <div class="plano-nome">Personal Training</div>
+        <div class="plano-vals">
+          <div class="plano-val">R$2.140</div>
+          <div class="plano-badge badge-down">-21,6% ticket</div>
+        </div>
+      </div>
+      <div class="plano-row">
+        <div class="plano-nome">Muay Thai</div>
+        <div class="plano-vals">
+          <div class="plano-val">R$910</div>
+          <div class="plano-badge badge-up">+44%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">Forma de Pagamento (Março)</div>
+    <div class="card">
+      <div class="barra-row">
+        <div class="barra-label">Pix</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:62%;background:var(--verde-c)"></div></div>
+          <div class="barra-val">62% das transações ▲ era 46% em fev</div>
+        </div>
+      </div>
+      <div class="barra-row">
+        <div class="barra-label">Dinheiro</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:36%;background:#95A5A6"></div></div>
+          <div class="barra-val">36% ▼ era 53% em fev</div>
+        </div>
+      </div>
+      <div class="barra-row">
+        <div class="barra-label">Cartão</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:2%;background:var(--accent)"></div></div>
+          <div class="barra-val">2%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB EVASÃO -->
+  <div class="section" id="evasao">
+    <div class="sec-title">Contratos Ativos</div>
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Janeiro</div>
+        <div class="kpi-value">147</div>
+        <div class="kpi-delta">contratos</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Fevereiro</div>
+        <div class="kpi-value">147</div>
+        <div class="kpi-delta">contratos</div>
+      </div>
+      <div class="kpi risco">
+        <div class="kpi-label">Março</div>
+        <div class="kpi-value">132</div>
+        <div class="kpi-delta delta-down">▼ -15</div>
+      </div>
+      <div class="kpi accent">
+        <div class="kpi-label">Meta Abril</div>
+        <div class="kpi-value">&lt; 20</div>
+        <div class="kpi-delta">encerramentos</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Evasão Fev × Mar</div>
+    <div class="comp-row">
+      <div class="comp-card">
+        <div class="comp-mes">Fevereiro</div>
+        <div class="comp-val" style="color:var(--risco)">19</div>
+        <div class="comp-sub">evadidos · 12,9%</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-mes">Março</div>
+        <div class="comp-val" style="color:var(--risco)">26</div>
+        <div class="comp-sub">evadidos · 19,7% ▲</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Motivo de Evasão</div>
+      <div class="barra-row">
+        <div class="barra-label">Automático</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:92%;background:var(--risco)"></div></div>
+          <div class="barra-val">92% em março — não-renovação passiva</div>
+        </div>
+      </div>
+      <div class="barra-row">
+        <div class="barra-label">Mud. endereço</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:8%;background:#E67E22"></div></div>
+          <div class="barra-val">8% — perda definitiva</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tempo de Permanência dos Evadidos</div>
+      <div class="barra-row">
+        <div class="barra-label">0–45 dias</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:55%;background:var(--risco)"></div></div>
+          <div class="barra-val">Maior grupo — primeiros 45 dias críticos</div>
+        </div>
+      </div>
+      <div class="barra-row">
+        <div class="barra-label">46–90 dias</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:30%;background:var(--accent)"></div></div>
+          <div class="barra-val">Segundo grupo</div>
+        </div>
+      </div>
+      <div class="barra-row">
+        <div class="barra-label">90+ dias</div>
+        <div class="barra-wrap">
+          <div class="barra-bg"><div class="barra-fill" style="width:25%;background:var(--verde-c)"></div></div>
+          <div class="barra-val">Cresceu: 3 (fev) → 9 (mar)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">Receita Perdida por Evasão</div>
+    <div class="kpi-grid">
+      <div class="kpi risco">
+        <div class="kpi-label">Fevereiro</div>
+        <div class="kpi-value" style="font-size:18px">R$2.360</div>
+        <div class="kpi-delta delta-down">15,8% da receita</div>
+      </div>
+      <div class="kpi risco">
+        <div class="kpi-label">Março</div>
+        <div class="kpi-value" style="font-size:18px">R$3.392</div>
+        <div class="kpi-delta delta-down">18,6% da receita</div>
+      </div>
+    </div>
+    <div class="kpi" style="margin-bottom:12px">
+      <div class="kpi-label">Total perdido em 2 meses</div>
+      <div class="kpi-value">R$ 5.752</div>
+      <div class="kpi-delta">recuperar 30–40% = R$1.700–2.300/mês preservados</div>
+    </div>
+  </div>
+
+  <!-- TAB PERFIL -->
+  <div class="section" id="perfil">
+    <div class="sec-title">Visão Geral da Base</div>
+    <div class="kpi-grid three">
+      <div class="kpi">
+        <div class="kpi-label">Total</div>
+        <div class="kpi-value">121</div>
+        <div class="kpi-delta">alunos ativos</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Idade Média</div>
+        <div class="kpi-value">31</div>
+        <div class="kpi-delta">anos</div>
+      </div>
+      <div class="kpi accent">
+        <div class="kpi-label">Perfil</div>
+        <div class="kpi-value" style="font-size:14px">Jovem</div>
+        <div class="kpi-delta">alta volatilidade</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Distribuição por Gênero</div>
+    <div class="card">
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#E8E8E8" stroke-width="14"/>
+          <!-- Feminino 65.3% = 239.4deg -->
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#4CAF8A" stroke-width="14"
+            stroke-dasharray="239.4 149.6" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+          <!-- Masculino 34.7% -->
+          <circle cx="50" cy="50" r="38" fill="none" stroke="#2E6B5E" stroke-width="14"
+            stroke-dasharray="149.6 239.4" stroke-dashoffset="-239.4" transform="rotate(-90 50 50)"/>
+          <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#1A3C34" font-family="DM Mono">121</text>
+        </svg>
+        <div class="donut-legenda">
+          <div class="legenda-item">
+            <div class="legenda-dot" style="background:#4CAF8A"></div>
+            <div class="legenda-nome">Feminino</div>
+            <div class="legenda-pct">65,3%</div>
+          </div>
+          <div class="legenda-item">
+            <div class="legenda-dot" style="background:#2E6B5E"></div>
+            <div class="legenda-nome">Masculino</div>
+            <div class="legenda-pct">34,7%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title">Distribuição por Faixa Etária</div>
+    <div class="card">
+      <div class="faixa-row">
+        <div class="faixa-label">13–19</div>
+        <div class="faixa-barra"><div class="faixa-fill" style="width:24%;background:#4CAF8A"><span class="faixa-pct">24%</span></div></div>
+        <div class="faixa-n">29</div>
+      </div>
+      <div class="faixa-row">
+        <div class="faixa-label">20–30</div>
+        <div class="faixa-barra"><div class="faixa-fill" style="width:34.7%;background:#2E6B5E"><span class="faixa-pct">35%</span></div></div>
+        <div class="faixa-n">42</div>
+      </div>
+      <div class="faixa-row">
+        <div class="faixa-label">31–40</div>
+        <div class="faixa-barra"><div class="faixa-fill" style="width:19.8%;background:#1A3C34"><span class="faixa-pct">20%</span></div></div>
+        <div class="faixa-n">24</div>
+      </div>
+      <div class="faixa-row">
+        <div class="faixa-label">41–50</div>
+        <div class="faixa-barra"><div class="faixa-fill" style="width:14%;background:#F5A623"><span class="faixa-pct">14%</span></div></div>
+        <div class="faixa-n">17</div>
+      </div>
+      <div class="faixa-row">
+        <div class="faixa-label">50+</div>
+        <div class="faixa-barra"><div class="faixa-fill" style="width:7.4%;background:#95A5A6"><span class="faixa-pct">7%</span></div></div>
+        <div class="faixa-n">9</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Insights Estratégicos</div>
+    <div class="positivo">
+      <div style="font-size:18px">👩</div>
+      <div>
+        <div class="positivo-titulo">Feminino domina — 65% da base</div>
+        <div class="positivo-texto">Qualquer ação de marketing ou produto que ignore isso está desperdiçando audiência.</div>
+      </div>
+    </div>
+    <div class="alerta">
+      <div class="alerta-icon">⚠️</div>
+      <div>
+        <div class="alerta-titulo">Base jovem = alta volatilidade</div>
+        <div class="alerta-texto">58,7% tem entre 13 e 30 anos. Esse perfil cancela mais e precisa de retenção ativa — não passiva.</div>
+      </div>
+    </div>
+    <div class="positivo">
+      <div style="font-size:18px">💎</div>
+      <div>
+        <div class="positivo-titulo">Público 40+ tem maior ticket potencial</div>
+        <div class="positivo-texto">21,4% da base. Espaço real para programas premium: personal, saúde preventiva, musculação para adultos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB ALERTAS -->
+  <div class="section" id="alertas">
+    <div class="sec-title">Alertas Críticos</div>
+
+    <div class="alerta">
+      <div class="alerta-icon">🔴</div>
+      <div>
+        <div class="alerta-titulo">Churn de 19,7% em março</div>
+        <div class="alerta-texto">Quase o dobro do limite aceitável (10%). 92% das saídas foram automáticas — o aluno não cancelou, simplesmente não renovou.</div>
+      </div>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-icon">🔴</div>
+      <div>
+        <div class="alerta-titulo">R$ 5.752 perdidos em 2 meses</div>
+        <div class="alerta-texto">Receita perdida por evasão em fevereiro e março. Contato proativo 5 dias antes do vencimento pode recuperar R$1.700–2.300/mês.</div>
+      </div>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-icon">⚠️</div>
+      <div>
+        <div class="alerta-titulo">Ticket do Personal caiu -21,6%</div>
+        <div class="alerta-texto">De R$455 para R$357. Novos alunos entram em planos mais baratos. Revisar precificação antes de continuar captando nessa modalidade.</div>
+      </div>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-icon">⚠️</div>
+      <div>
+        <div class="alerta-titulo">Sexta-feira: 9,9% de faltas</div>
+        <div class="alerta-texto">Pior dia da semana em presença. Quinta tem maior desistência (12,5%). Esses dois dias precisam de atenção operacional.</div>
+      </div>
+    </div>
+
+    <div class="sec-title">Pontos Positivos</div>
+
+    <div class="positivo">
+      <div style="font-size:18px">✅</div>
+      <div>
+        <div class="positivo-titulo">Receita cresceu +22,2% em março</div>
+        <div class="positivo-texto">De R$14.897 para R$18.203. Crescimento equilibrado — veio de novos alunos, não de aumento de preço.</div>
+      </div>
+    </div>
+
+    <div class="positivo">
+      <div style="font-size:18px">✅</div>
+      <div>
+        <div class="positivo-titulo">Pix avançou para 62% das transações</div>
+        <div class="positivo-texto">Era 46% em fevereiro. Melhora direta no controle financeiro e rastreabilidade da receita.</div>
+      </div>
+    </div>
+
+    <div class="positivo">
+      <div style="font-size:18px">✅</div>
+      <div>
+        <div class="positivo-titulo">Muay Thai cresceu +44% em receita</div>
+        <div class="positivo-texto">Presença acima de 97% e quase zero desistência. Modalidade com maior potencial de crescimento.</div>
+      </div>
+    </div>
+
+    <div class="positivo">
+      <div style="font-size:18px">✅</div>
+      <div>
+        <div class="positivo-titulo">Presença geral melhorou em março</div>
+        <div class="positivo-texto">De 81,3% para 87,6% (+6,3pp). Faltas caíram de 7,4% para 2,8%. Tendência positiva.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  Ecossistema IA Fitness™ · Método Lucro Invisível · Consultor Sherley Ferreira · Abril 2026
+</div>
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
